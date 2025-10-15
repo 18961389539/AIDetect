@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABB - 智能检测平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#667eea',
+                        secondary: '#764ba2',
+                        accent: '#ff6b6b'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-primary to-secondary min-h-screen font-sans">
+    <header class="fixed top-0 w-full bg-white/95 backdrop-blur-sm shadow-lg z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <nav class="flex justify-between items-center py-4">
+                <div class="text-2xl font-bold text-primary">ABB</div>
+                <ul class="flex space-x-8">
+                    <li><a href="index.html" class="text-gray-700 font-medium hover:text-primary transition-colors">主页</a></li>
+                    <li><a href="carton-detection.html" class="text-gray-700 font-medium hover:text-primary transition-colors">纸箱检测</a></li>
+                    <li><a href="container-detection.html" class="text-gray-700 font-medium hover:text-primary transition-colors">周转箱检测</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="pt-32 pb-20 text-center text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-5xl md:text-6xl font-bold mb-4 text-shadow-lg">智能视觉检测平台</h1>
+            <p class="text-xl md:text-2xl mb-8 opacity-90">基于AI的纸箱和周转箱智能检测解决方案</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="carton-detection.html" class="bg-accent text-white px-8 py-3 rounded-full font-semibold hover:bg-red-500 transform hover:-translate-y-1 transition-all duration-300 shadow-lg">开始纸箱检测</a>
+                <a href="container-detection.html" class="bg-white/20 text-white border-2 border-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-primary transform hover:-translate-y-1 transition-all duration-300">开始周转箱检测</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-center mb-4">核心功能</h2>
+            <p class="text-xl text-gray-600 text-center max-w-2xl mx-auto mb-12">
+                我们提供专业的AI视觉检测服务，确保产品质量和生产效率
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-gray-50 p-8 rounded-xl text-center hover:-translate-y-2 transition-transform duration-300">
+                    <div class="text-5xl mb-4 text-primary">⚡</div>
+                    <h3 class="text-xl font-semibold mb-2">实时分析</h3>
+                    <p class="text-gray-600">毫秒级响应速度，实时分析检测结果，支持生产线高速运转</p>
+                </div>
+                
+                <div class="bg-gray-50 p-8 rounded-xl text-center hover:-translate-y-2 transition-transform duration-300">
+                    <div class="text-5xl mb-4 text-primary">📊</div>
+                    <h3 class="text-xl font-semibold mb-2">数据报告</h3>
+                    <p class="text-gray-600">生成详细的检测报告，提供数据分析和质量趋势预测</p>
+                </div>
+                
+                <div class="bg-gray-50 p-8 rounded-xl text-center hover:-translate-y-2 transition-transform duration-300">
+                    <div class="text-5xl mb-4 text-primary">⚙️</div>
+                    <h3 class="text-xl font-semibold mb-2">智能配置</h3>
+                    <p class="text-gray-600">根据业务需求，智能配置检测参数，提高检测效率和准确度</p>
+                </div>
+                
+                <div class="bg-gray-50 p-8 rounded-xl text-center hover:-translate-y-2 transition-transform duration-300">
+                    <div class="text-5xl mb-4 text-primary">🔒</div>
+                    <h3 class="text-xl font-semibold mb-2">数据隐私</h3>
+                    <p class="text-gray-600">数据隐私保护，所有数据都保存在云端，不会泄露</p>
+                </div>
+                
+                <div class="bg-gray-50 p-8 rounded-xl text-center hover:-translate-y-2 transition-transform duration-300">
+                    <div class="text-5xl mb-4 text-primary">🕘</div>
+                    <h3 class="text-xl font-semibold mb-2">数据回放</h3>
+                    <p class="text-gray-600">弥补现场漏检，降低风险，实现精准的质量追溯</p>
+                </div>
+                
+                <div class="bg-gray-50 p-8 rounded-xl text-center hover:-translate-y-2 transition-transform duration-300">
+                    <div class="text-5xl mb-4 text-primary">📦</div>
+                    <h3 class="text-xl font-semibold mb-2">数据可视化</h3>
+                    <p class="text-gray-600">可视化展示检测结果，帮助用户快速了解检测进度和结果</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // 简单的页面交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 导航栏滚动效果
+            window.addEventListener('scroll', function() {
+                const header = document.querySelector('header');
+                if (window.scrollY > 100) {
+                    header.classList.remove('bg-white/95');
+                    header.classList.add('bg-white/98');
+                } else {
+                    header.classList.remove('bg-white/98');
+                    header.classList.add('bg-white/95');
+                }
+            });
+            
+            // 卡片动画效果
+            const featureCards = document.querySelectorAll('.bg-gray-50');
+            featureCards.forEach((card, index) => {
+                card.classList.add('opacity-0', 'translate-y-8');
+                
+                setTimeout(() => {
+                    card.classList.add('transition-all', 'duration-600', 'ease-out');
+                    card.classList.remove('opacity-0', 'translate-y-8');
+                }, index * 200);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>周转箱检测 - LandingAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4facfe',
+                        secondary: '#6c757d',
+                        accent: '#667eea'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 font-sans antialiased min-h-screen">
+    <header class="fixed top-0 w-full bg-white/95 backdrop-blur-sm shadow-lg z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <nav class="flex justify-between items-center py-4">
+                <div class="text-2xl font-bold text-accent">LandingAI</div>
+                <ul class="flex space-x-8 list-none">
+                    <li><a href="index.html" class="text-gray-700 font-medium hover:text-accent transition-colors">主页</a></li>
+                    <li><a href="carton-detection.html" class="text-gray-700 font-medium hover:text-accent transition-colors">纸箱检测</a></li>
+                    <li><a href="container-detection.html" class="text-accent font-semibold">周转箱检测</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="bg-gradient-to-r from-primary to-cyan-400 text-white pt-32 pb-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-5xl font-bold mb-4">周转箱智能检测</h1>
+            <p class="text-xl opacity-90">上传周转箱图像，AI将自动检测完整性、清洁度、标识清晰度等关键指标</p>
+        </div>
+    </section>
+
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-8">上传周转箱图像</h2>
+            
+            <div id="uploadArea" class="border-3 border-dashed border-gray-300 rounded-2xl p-12 text-center mb-8 transition-all duration-300 cursor-pointer hover:border-primary hover:bg-blue-50">
+                <div class="text-6xl mb-4 text-primary">🚚</div>
+                <h3 class="text-xl font-semibold mb-2">拖放图像文件或点击上传</h3>
+                <p class="text-gray-600">支持 JPG、PNG 格式，最大文件大小 10MB</p>
+                <input type="file" id="fileInput" accept="image/*" class="hidden" aria-label="选择周转箱图像文件">
+                <button class="bg-primary text-white px-8 py-3 rounded-full font-semibold mt-4 hover:bg-blue-600 transition-all duration-300" onclick="document.getElementById('fileInput').click()">
+                    选择文件
+                </button>
+            </div>
+            
+            <div id="imagePreview" class="hidden">
+                <h3 class="text-xl font-semibold mb-4">预览图像</h3>
+                <img id="previewImage" class="w-full max-w-2xl h-80 object-cover rounded-xl mb-4" alt="预览图像">
+                <button class="bg-primary text-white px-8 py-3 rounded-full font-semibold mr-4 hover:bg-blue-600 transition-all duration-300" onclick="startDetection()">开始检测</button>
+                <button class="bg-secondary text-white px-8 py-3 rounded-full font-semibold hover:bg-gray-600 transition-all duration-300" onclick="resetUpload()">重新选择</button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+                <div class="bg-gray-50 p-6 rounded-xl text-center">
+                    <h4 class="text-lg font-semibold text-primary mb-2">🛡️ 完整性检测</h4>
+                    <p class="text-gray-600">检测周转箱结构完整性、有无破损</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-xl text-center">
+                    <h4 class="text-lg font-semibold text-primary mb-2">🧹 清洁度检测</h4>
+                    <p class="text-gray-600">检查表面清洁度、有无污渍残留</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-xl text-center">
+                    <h4 class="text-lg font-semibold text-primary mb-2">🏷️ 标识检测</h4>
+                    <p class="text-gray-600">验证标识清晰度、位置准确性</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-xl text-center">
+                    <h4 class="text-lg font-semibold text-primary mb-2">⚡ 实时分析</h4>
+                    <p class="text-gray-600">毫秒级响应，即时反馈结果</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="resultsSection" class="py-20 bg-gray-50 hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-8">检测结果</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+                <div class="bg-white p-8 rounded-2xl shadow-lg">
+                    <h3 class="text-xl font-semibold text-primary mb-4">🛡️ 完整性检测结果</h3>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-700">箱体结构:</span>
+                        <span class="font-semibold text-green-600">
+                            <span class="inline-block w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                            完整 ✓
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-700">边角状况:</span>
+                        <span class="font-semibold text-green-600">
+                            <span class="inline-block w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                            良好 ✓
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-700">把手完整性:</span>
+                        <span class="font-semibold text-yellow-600">
+                            <span class="inline-block w-3 h-3 bg-yellow-500 rounded-full mr-2"></span>
+                            轻微磨损 ⚠
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center py-2">
+                        <span class="text-gray-700">总体评价:</span>
+                        <span class="font-semibold text-green-600">合格</span>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-8 rounded-2xl shadow-lg">
+                    <h3 class="text-xl font-semibold text-primary mb-4">🧹 清洁度检测结果</h3>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-700">表面清洁度:</span>
+                        <span class="font-semibold text-green-600">
+                            <span class="inline-block w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                            清洁 ✓
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-700">内部清洁:</span>
+                        <span class="font-semibold text-green-600">
+                            <span class="inline-block w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                            无残留 ✓
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-700">异味检测:</span>
+                        <span class="font-semibold text-green-600">
+                            <span class="inline-block w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                            无异味 ✓
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center py-2">
+                        <span class="text-gray-700">总体评价:</span>
+                        <span class="font-semibold text-green-600">合格</span>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-8 rounded-2xl shadow-lg">
+                    <h3 class="text-xl font-semibold text-primary mb-4">🏷️ 标识检测结果</h3>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-700">标识清晰度:</span>
+                        <span class="font-semibold text-green-600">
+                            <span class="inline-block w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                            清晰 ✓
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-700">位置准确性:</span>
+                        <span class="font-semibold text-green-600">
+                            <span class="inline-block w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                            准确 ✓
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-700">信息完整性:</span>
+                        <span class="font-semibold text-green-600">
+                            <span class="inline-block w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                            完整 ✓
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center py-2">
+                        <span class="text-gray-700">总体评价:</span>
+                        <span class="font-semibold text-green-600">合格</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <div class="bg-white p-8 rounded-2xl shadow-lg mb-8">
+                    <h3 class="text-xl font-semibold text-primary mb-4">📊 综合评估报告</h3>
+                    <div class="flex justify-around flex-wrap gap-4">
+                        <div class="text-center">
+                            <div class="text-4xl font-bold text-green-600">92%</div>
+                            <div class="text-gray-600">检测通过率</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-4xl font-bold text-yellow-600">1</div>
+                            <div class="text-gray-600">警告项目</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-4xl font-bold text-green-600">0</div>
+                            <div class="text-gray-600">失败项目</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-4xl font-bold text-primary">A</div>
+                            <div class="text-gray-600">质量等级</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="bg-primary text-white px-8 py-3 rounded-full font-semibold mr-4 hover:bg-blue-600 transition-all duration-300" onclick="downloadReport()">下载检测报告</button>
+                <button class="bg-secondary text-white px-8 py-3 rounded-full font-semibold hover:bg-gray-600 transition-all duration-300" onclick="resetDetection()">重新检测</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImage = document.getElementById('previewImage');
+        const resultsSection = document.getElementById('resultsSection');
+
+        // 文件上传处理
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImage.src = e.target.result;
+                        imagePreview.classList.remove('hidden');
+                        uploadArea.classList.add('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    alert('请选择图像文件（JPG、PNG格式）');
+                }
+            }
+        });
+
+        // 拖放功能
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadArea.classList.add('border-primary', 'bg-blue-50');
+        });
+
+        uploadArea.addEventListener('dragleave', function() {
+            uploadArea.classList.remove('border-primary', 'bg-blue-50');
+        });
+
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('border-primary', 'bg-blue-50');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                fileInput.files = e.dataTransfer.files;
+                const event = new Event('change');
+                fileInput.dispatchEvent(event);
+            }
+        });
+
+        // 开始检测
+        function startDetection() {
+            // 模拟检测过程
+            resultsSection.classList.remove('hidden');
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+            
+            // 模拟检测动画
+            const resultItems = document.querySelectorAll('.font-semibold.text-green-600, .font-semibold.text-yellow-600');
+            resultItems.forEach((item, index) => {
+                item.classList.add('opacity-0');
+                setTimeout(() => {
+                    item.classList.add('transition-opacity', 'duration-500', 'ease-in-out');
+                    item.classList.remove('opacity-0');
+                }, index * 200);
+            });
+        }
+
+        // 重置上传
+        function resetUpload() {
+            fileInput.value = '';
+            imagePreview.classList.add('hidden');
+            uploadArea.classList.remove('hidden');
+            resultsSection.classList.add('hidden');
+        }
+
+        // 重置检测
+        function resetDetection() {
+            resetUpload();
+        }
+
+        // 下载报告
+        function downloadReport() {
+            alert('检测报告下载功能（模拟）');
+        }
+
+        // 页面加载时的动画效果
+        document.addEventListener('DOMContentLoaded', function() {
+            const detectionAreas = document.querySelectorAll('.bg-gray-50');
+            detectionAreas.forEach((area, index) => {
+                area.classList.add('opacity-0', 'translate-y-4');
+                
+                setTimeout(() => {
+                    area.classList.add('transition-all', 'duration-600', 'ease-out');
+                    area.classList.remove('opacity-0', 'translate-y-4');
+                }, index * 200);
+            });
+        });
+    </script>
+</body>
+</html>
