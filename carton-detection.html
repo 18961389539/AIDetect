@@ -203,7 +203,7 @@
             formData.append('image', file);
             
             try {
-                const response = await fetch('http://14.103.249.56:8080/box_inference', {
+                const response = await fetch('https://14.103.249.56:443/box_inference', {
                    method:"POST",
                    body:formData 
                 });
